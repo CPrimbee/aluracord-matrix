@@ -32,7 +32,7 @@ export default function PaginaInicial() {
           justifyContent: "center",
           backgroundColor: appConfig.theme.colors.primary[500],
           backgroundImage:
-            "url(https://virtualbackgrounds.site/wp-content/uploads/2020/08/the-matrix-digital-rain.jpg)",
+            "url(https://virtualbackgrounds.site/wp-content/uploads/2020/12/bright-gaming-room-setup.jpg)",
           backgroundRepeat: "no-repeat",
           backgroundSize: "cover",
           backgroundBlendMode: "multiply",
@@ -49,7 +49,7 @@ export default function PaginaInicial() {
             },
             width: "100%",
             maxWidth: "700px",
-            borderRadius: "5px",
+            borderRadius: "0px 20px 20px 20px",
             padding: "32px",
             margin: "16px",
             boxShadow: "0 2px 10px 0 rgb(0 0 0 / 20%)",
@@ -62,7 +62,6 @@ export default function PaginaInicial() {
             onSubmit={function (event) {
               event.preventDefault();
               roteamento.push("/chat");
-              // window.location.href = "/chat";
             }}
             styleSheet={{
               display: "flex",
@@ -74,7 +73,7 @@ export default function PaginaInicial() {
               marginBottom: "32px",
             }}
           >
-            <Title tag="h2">Boas vindas de volta!</Title>
+            <Title tag="h2">No Spoiler!</Title>
             <Text
               variant="body3"
               styleSheet={{
@@ -126,7 +125,7 @@ export default function PaginaInicial() {
               backgroundColor: appConfig.theme.colors.neutrals[800],
               border: "1px solid",
               borderColor: appConfig.theme.colors.neutrals[999],
-              borderRadius: "10px",
+              borderRadius: "20px 0px 20px 20px",
               flex: 1,
               minHeight: "240px",
             }}
