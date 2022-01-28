@@ -20,8 +20,19 @@ function Title(props) {
 }
 
 export default function PaginaInicial() {
-  const [username, setUsername] = React.useState("cprimbee");
+  const [username, setUsername] = React.useState("");
+  const [desabilitado, setDesabilitado] = React.useState(true);
   const roteamento = useRouter();
+
+  // function handleDadosUsuarioGit(user) {
+  //   fetch(`https://api.github.com/users/${user}`)
+  //     .then(function (response) {
+  //       return response.json();
+  //     })
+  //     .then(function (result) {
+  //       console.log(result);
+  //     });
+  // }
 
   return (
     <>
@@ -61,7 +72,10 @@ export default function PaginaInicial() {
             as="form"
             onSubmit={function (event) {
               event.preventDefault();
-              roteamento.push("/chat");
+              roteamento.push({
+                pathname: "/chat",
+                query: { username: username },
+              });
             }}
             styleSheet={{
               display: "flex",
@@ -89,6 +103,12 @@ export default function PaginaInicial() {
               onChange={function (event) {
                 const valor = event.target.value;
                 setUsername(valor);
+                if (valor.length <= 2) {
+                  setDesabilitado(true);
+                }
+                if (valor.length > 2) {
+                  setDesabilitado(false);
+                }
               }}
               fullWidth
               textFieldColors={{
@@ -103,6 +123,7 @@ export default function PaginaInicial() {
             <Button
               type="submit"
               label="Entrar"
+              disabled={desabilitado}
               fullWidth
               buttonColors={{
                 contrastColor: appConfig.theme.colors.neutrals["000"],
@@ -135,7 +156,11 @@ export default function PaginaInicial() {
                 borderRadius: "50%",
                 marginBottom: "16px",
               }}
-              src={`https://github.com/${username}.png`}
+              src={
+                desabilitado
+                  ? "https://github.com/alura.png"
+                  : `https://github.com/${username}.png`
+              }
             />
             <Text
               variant="body4"

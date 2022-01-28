@@ -1,10 +1,13 @@
 import { Box, Text, TextField, Image, Button } from "@skynexui/components";
 import React from "react";
+import { useRouter } from "next/router";
 import appConfig from "../config.json";
 
 export default function ChatPage() {
   const [mensagem, setMensagem] = React.useState("");
   const [listaDeMensagens, setListaDeMensagens] = React.useState([]);
+  const router = useRouter();
+  const { username } = router.query;
 
   /*
   // Usuário
@@ -21,7 +24,7 @@ export default function ChatPage() {
   function handleNovaMensagem(novaMensagem) {
     const mensagem = {
       id: listaDeMensagens.length + 1,
-      de: "cprimbee",
+      de: username,
       texto: novaMensagem,
     };
     setListaDeMensagens([mensagem, ...listaDeMensagens]);
