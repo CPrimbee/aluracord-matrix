@@ -26,6 +26,7 @@ export default function ChatPage() {
       id: listaDeMensagens.length + 1,
       de: username,
       texto: novaMensagem,
+      excluido: false,
     };
     setListaDeMensagens([mensagem, ...listaDeMensagens]);
     setMensagem("");
@@ -79,6 +80,12 @@ export default function ChatPage() {
               display: "flex",
               alignItems: "center",
             }}
+            onSubmit={function (event) {
+              event.preventDefault();
+              if (mensagem != "") {
+                handleNovaMensagem(mensagem);
+              }
+            }}
           >
             <TextField
               value={mensagem}
@@ -89,13 +96,15 @@ export default function ChatPage() {
               onKeyPress={(event) => {
                 if (event.key === "Enter") {
                   event.preventDefault();
-                  handleNovaMensagem(mensagem);
+                  if (mensagem != "") {
+                    handleNovaMensagem(mensagem);
+                  }
                 }
               }}
               placeholder="Insira sua mensagem aqui..."
               type="textarea"
               styleSheet={{
-                width: "100%",
+                width: "95%",
                 border: "0",
                 resize: "none",
                 borderRadius: "5px",
@@ -104,6 +113,18 @@ export default function ChatPage() {
                 marginRight: "12px",
                 color: appConfig.theme.colors.neutrals[200],
               }}
+            />
+            <Button
+              type="submit"
+              label="OK"
+              fullWidth
+              buttonColors={{
+                contrastColor: appConfig.theme.colors.neutrals["000"],
+                mainColor: appConfig.theme.colors.primary[500],
+                mainColorLight: appConfig.theme.colors.primary[400],
+                mainColorStrong: appConfig.theme.colors.primary[600],
+              }}
+              styleSheet={{ width: "5%" }}
             />
           </Box>
         </Box>
@@ -149,7 +170,7 @@ function MessageList(props) {
         marginBottom: "16px",
       }}
     >
-      {props.mensagens.map((mensagem) => {
+      {props.mensagens.map((mensagem, index) => {
         return (
           <Text
             key={mensagem.id}
@@ -189,6 +210,15 @@ function MessageList(props) {
               >
                 {new Date().toLocaleDateString()}
               </Text>
+              <Button
+                variant="tertiary"
+                colorVariant="neutral"
+                label="x"
+                onClick={(event) => {
+                  event.preventDefault();
+                  mensagem.excluido = true;
+                }}
+              />
             </Box>
             {mensagem.texto}
           </Text>
