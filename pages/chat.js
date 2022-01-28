@@ -3,11 +3,12 @@ import React from "react";
 import { useRouter } from "next/router";
 import appConfig from "../config.json";
 import { createClient } from "@supabase/supabase-js";
+import "dotenv/config";
 
-const SUPABASE_ANON_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzM5NzkwNCwiZXhwIjoxOTU4OTczOTA0fQ.63aNPtmoIfOJnqki2g9RyJXiZ81N1NGq_PerM0HeKcs";
-const SUPABASE_URL = "https://iuozywvorojrvvsslpqv.supabase.co";
-const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabaseClient = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_ANON_KEY
+);
 
 export default function ChatPage() {
   const [mensagem, setMensagem] = React.useState("");
