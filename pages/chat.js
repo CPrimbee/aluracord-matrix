@@ -2,6 +2,12 @@ import { Box, Text, TextField, Image, Button } from "@skynexui/components";
 import React from "react";
 import { useRouter } from "next/router";
 import appConfig from "../config.json";
+import { createClient } from "@supabase/supabase-js";
+
+const SUPABASE_ANON_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzM5NzkwNCwiZXhwIjoxOTU4OTczOTA0fQ.63aNPtmoIfOJnqki2g9RyJXiZ81N1NGq_PerM0HeKcs";
+const SUPABASE_URL = "https://iuozywvorojrvvsslpqv.supabase.co";
+const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 export default function ChatPage() {
   const [mensagem, setMensagem] = React.useState("");
@@ -9,26 +15,29 @@ export default function ChatPage() {
   const router = useRouter();
   const { username } = router.query;
 
-  /*
-  // Usuário
-  - usuário digita no campo textarea
-  - aperta 'enter' para enviar
-  - tem que adicionar o texto na listagem
-
-  // Dev
-  - [x] Campo criado
-  - [x] usar o onChange, useState (ter if caso seja enter para limpar a variável)
-  - [x] lista de mensagens
-  */
+  React.useEffect(() => {
+    supabaseClient
+      .from("mensagens")
+      .select("*")
+      .order("id", { ascending: false })
+      .then(({ data }) => {
+        setListaDeMensagens(data);
+      });
+  }, []);
 
   function handleNovaMensagem(novaMensagem) {
     const mensagem = {
-      id: listaDeMensagens.length + 1,
       de: username,
       texto: novaMensagem,
-      excluido: false,
     };
-    setListaDeMensagens([mensagem, ...listaDeMensagens]);
+
+    supabaseClient
+      .from("mensagens")
+      .insert([mensagem])
+      .then(({ data }) => {
+        setListaDeMensagens([data[0], ...listaDeMensagens]);
+      });
+
     setMensagem("");
   }
 
@@ -208,7 +217,7 @@ function MessageList(props) {
                 }}
                 tag="span"
               >
-                {new Date().toLocaleDateString()}
+                {new Date(mensagem.created_at).toLocaleDateString()}
               </Text>
               <Button
                 variant="tertiary"
