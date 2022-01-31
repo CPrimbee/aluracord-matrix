@@ -3,17 +3,27 @@ import React from "react";
 import { useRouter } from "next/router";
 import appConfig from "../config.json";
 import { createClient } from "@supabase/supabase-js";
+import { ButtonSendSticker } from "../src/components/ButtonSendSticker";
 
 const SUPABASE_ANON_KEY =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzM5NzkwNCwiZXhwIjoxOTU4OTczOTA0fQ.63aNPtmoIfOJnqki2g9RyJXiZ81N1NGq_PerM0HeKcs";
 const SUPABASE_URL = "https://iuozywvorojrvvsslpqv.supabase.co";
 const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+function escutaMensagensEmTempoReal(adicionaMensagem) {
+  return supabaseClient
+    .from("mensagens")
+    .on("INSERT", (respostaLive) => {
+      adicionaMensagem(respostaLive.new);
+    })
+    .subscribe();
+}
+
 export default function ChatPage() {
-  const [mensagem, setMensagem] = React.useState("");
-  const [listaDeMensagens, setListaDeMensagens] = React.useState([]);
   const router = useRouter();
   const { username } = router.query;
+  const [mensagem, setMensagem] = React.useState("");
+  const [listaDeMensagens, setListaDeMensagens] = React.useState([]);
 
   React.useEffect(() => {
     supabaseClient
@@ -23,6 +33,12 @@ export default function ChatPage() {
       .then(({ data }) => {
         setListaDeMensagens(data);
       });
+
+    escutaMensagensEmTempoReal((novaMensagem) => {
+      setListaDeMensagens((valorAtualDaLista) => {
+        return [novaMensagem, ...valorAtualDaLista];
+      });
+    });
   }, []);
 
   function handleNovaMensagem(novaMensagem) {
@@ -34,9 +50,7 @@ export default function ChatPage() {
     supabaseClient
       .from("mensagens")
       .insert([mensagem])
-      .then(({ data }) => {
-        setListaDeMensagens([data[0], ...listaDeMensagens]);
-      });
+      .then(({ data }) => {});
 
     setMensagem("");
   }
@@ -123,6 +137,11 @@ export default function ChatPage() {
                 color: appConfig.theme.colors.neutrals[200],
               }}
             />
+            <ButtonSendSticker
+              onStickerClick={(sticker) => {
+                handleNovaMensagem(`:sticker:${sticker}`);
+              }}
+            />
             <Button
               type="submit"
               label="OK"
@@ -133,7 +152,7 @@ export default function ChatPage() {
                 mainColorLight: appConfig.theme.colors.primary[400],
                 mainColorStrong: appConfig.theme.colors.primary[600],
               }}
-              styleSheet={{ width: "5%" }}
+              styleSheet={{ width: "5%", marginLeft: "12px" }}
             />
           </Box>
         </Box>
@@ -229,7 +248,14 @@ function MessageList(props) {
                 }}
               />
             </Box>
-            {mensagem.texto}
+            {mensagem.texto.startsWith(":sticker:") ? (
+              <Image
+                src={mensagem.texto.replace(":sticker:", "")}
+                styleSheet={{ width: "10%" }}
+              />
+            ) : (
+              mensagem.texto
+            )}
           </Text>
         );
       })}
